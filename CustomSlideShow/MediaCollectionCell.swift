@@ -73,7 +73,8 @@ class MediaCollectionCell: UICollectionViewCell {
     /// mute toggle
     @objc func muteToggle(){
         playerView.muteToggle()
-        if muteButton.imageView?.image == UIImage(named: "audio_off") {
+        print(muteButton.imageView?.image)
+        if muteButton.imageView?.image == UIImage(named: "audio_off")?.withRenderingMode(.alwaysTemplate) {
             muteButton.setImage(UIImage(named: "audio")?.withRenderingMode(.alwaysTemplate), for: .normal)
         }else{
             muteButton.setImage(UIImage(named: "audio_off")?.withRenderingMode(.alwaysTemplate), for: .normal)
