@@ -37,7 +37,17 @@ class MediaSlideShow: UIView, NibOwnerLoadable {
     /// delegate called on slideshow state changes
     weak var delegate: MediaSlideShowDelegate?
     
-    private var task: Task?
+    /// Timer interval
+    var slideShowInterval = 0.0 {
+        didSet{
+            slideshowTimer?.invalidate()
+            slideshowTimer = nil
+            setTimerIfNeeded()
+        }
+    }
+    
+    /// Slide timer
+    private var slideshowTimer: Timer?
 
     lazy var collectionView: UICollectionView = {
         let layout = generateLayout()
@@ -80,7 +90,7 @@ class MediaSlideShow: UIView, NibOwnerLoadable {
             make.bottom.equalToSuperview().inset(0)
         }
         self.backgroundColor = .clear
-        startTimer()
+        setTimerIfNeeded()
     }
     
     
@@ -131,6 +141,10 @@ extension MediaSlideShow {
         section.orthogonalScrollingBehavior = .paging
         section.visibleItemsInvalidationHandler = { [weak self] visibleItems, point, environment in
             
+            if (point.x / (self?.collectionView.bounds.width ?? 0)) != round(point.x / (self?.collectionView.bounds.width ?? 0)) {
+                self?.restartTimer()
+            }
+            
             self?.playFirstVisibleVideo()
             if let page = Int(exactly: CGFloat(point.x / (self?.collectionView.bounds.width ?? 0))){
                 self?.pageControl.currentPage = page
@@ -152,7 +166,7 @@ extension MediaSlideShow {
         
         if mediaCells.count > 0 {
             // 3. check if cell is fully visible
-            let firstVisibleCell = mediaCells.first(where: { checkVideoFrameVisibility(of: $0) })
+            let firstVisibleCell = mediaCells.first(where: { checkVideoFrameVisible(of: $0) })
             
             // 4. Loop cell for variable shouldPlay and pause rest of videos
             for mediaCell in mediaCells {
@@ -168,7 +182,7 @@ extension MediaSlideShow {
         let stackMediaCells = cells.compactMap({ $0 as? StackMediaCollectionCell })
         if stackMediaCells.count > 0 {
             // 3. check if cell is fully visible
-            let firstVisibleCell = stackMediaCells.first(where: { checkVideoFrameVisibility(of: $0) })
+            let firstVisibleCell = stackMediaCells.first(where: { checkVideoFrameVisible(of: $0) })
             
             // 4. Loop cell for variable shouldPlay and pause rest of videos
             for mediaCell in stackMediaCells {
@@ -185,27 +199,18 @@ extension MediaSlideShow {
     
     
     /// Check video frame visiblility
-    func checkVideoFrameVisibility(of cell: MediaCollectionCell) -> Bool {
+    func checkVideoFrameVisible(of cell: MediaCollectionCell) -> Bool {
         var cellRect = cell.playerView.bounds
         cellRect = cell.playerView.convert(cell.playerView.bounds, to: collectionView.superview)
         return collectionView.frame.contains(cellRect)
     }
     
     /// Check video frame visiblility
-    func checkVideoFrameVisibility(of cell: StackMediaCollectionCell) -> Bool {
+    func checkVideoFrameVisible(of cell: StackMediaCollectionCell) -> Bool {
         var cellRect = cell.playerView.bounds
         cellRect = cell.playerView.convert(cell.playerView.bounds, to: collectionView.superview)
         return collectionView.frame.contains(cellRect)
     }
-    
-    
-    /// Start timer
-    private func startTimer(){
-        task = Plan.every(5.seconds).do {
-            self.pageScroll()
-        }
-    }
-    
     
     
 }
@@ -284,16 +289,45 @@ extension MediaSlideShow: UICollectionViewDelegate, UICollectionViewDataSource, 
     
     func videoIsPlaying(isPlaying: Bool) {
         if isPlaying {
-            task?.suspend()
+            terminateTimer()
         }else{
-            task?.resume()
+            restartTimer()
         }
-        
     }
     
     func videoDidEnd() {
-        task?.resume()
+        pageScroll()
+        restartTimer()
     }
+    
+}
+
+// Timer
+extension MediaSlideShow {
+    private func setTimerIfNeeded(){
+        if slideShowInterval > 0 && dataSource.count > 1 && slideshowTimer == nil {
+            slideshowTimer = Timer.scheduledTimer(timeInterval: slideShowInterval, target: self, selector: #selector(MediaSlideShow.slideTick(_:)), userInfo: nil, repeats: true)
+        }
+    }
+    
+    @objc func slideTick(_ timer: Timer){
+        pageScroll()
+    }
+    
+    private func restartTimer(){
+        if slideshowTimer?.isValid != nil {
+            slideshowTimer?.invalidate()
+            slideshowTimer = nil
+        }
+        
+        setTimerIfNeeded()
+    }
+    
+    private func terminateTimer(){
+        slideshowTimer?.invalidate()
+        slideshowTimer = nil
+    }
+    
     
 }
 

@@ -24,7 +24,8 @@ class DemoVC: UIViewController {
             print(a.duration)
         }
         
-        let source: Array<MediaSlideShow.SourceType> = [.stackMediaUrls(mediaUrl: "https://www.mtaxi.com.tw/wp-content/uploads/2022/03/寵物專車15秒2-1.mp4", imageUrl: "https://oneapi.hostar.com.tw/oneLoginAdAndHelp/pic/jer.gif"),
+        let source: Array<MediaSlideShow.SourceType> = [.stackMediaUrls(mediaUrl: "https://oneapi.hostar.com.tw/oneLoginAdAndHelp/pic/Ice.MP4", imageUrl: "https://oneapi.hostar.com.tw/oneLoginAdAndHelp/pic/jer.gif"),
+                                                        .stackMediaUrls(mediaUrl: "https://oneapi.hostar.com.tw/oneLoginAdAndHelp/pic/Ice2.mp4", imageUrl: "https://oneapi.hostar.com.tw/oneLoginAdAndHelp/pic/jer.gif"),
                                                         .imageLink(url: "https://oneapi.hostar.com.tw/oneLoginAdAndHelp/pic/jer.gif"),
                                                         .mediaFile(path: UserDefaults.standard.string(forKey: "AAA")!),
                                                         .image(image: UIImage(named: "bbb")!),
@@ -32,6 +33,7 @@ class DemoVC: UIViewController {
         ]
         slideShowView.delegate = self
         slideShowView.dataSource = source
+        slideShowView.slideShowInterval = 5
         self.view.backgroundColor = .black
     }
     
