@@ -182,7 +182,7 @@ extension MediaSlideShow {
         let stackMediaCells = cells.compactMap({ $0 as? StackMediaCollectionCell })
         if stackMediaCells.count > 0 {
             // 3. check if cell is fully visible
-            let firstVisibleCell = stackMediaCells.first(where: { checkVideoFrameVisible(of: $0) })
+            let firstVisibleCell = stackMediaCells.first(where: { checkStackVideoFrameVisible(of: $0) })
             
             // 4. Loop cell for variable shouldPlay and pause rest of videos
             for mediaCell in stackMediaCells {
@@ -206,7 +206,7 @@ extension MediaSlideShow {
     }
     
     /// Check video frame visiblility
-    func checkVideoFrameVisible(of cell: StackMediaCollectionCell) -> Bool {
+    func checkStackVideoFrameVisible(of cell: StackMediaCollectionCell) -> Bool {
         var cellRect = cell.playerView.bounds
         cellRect = cell.playerView.convert(cell.playerView.bounds, to: collectionView.superview)
         return collectionView.frame.contains(cellRect)
