@@ -10,9 +10,9 @@ import UIKit
 import Schedule
 import SDWebImage
 
-protocol MediaSlideShowDelegate: AnyObject {
+@objc protocol MediaSlideShowDelegate: AnyObject {
     /// slideshow item did select
-    func slideItemDidSelect(indexPath: Int)
+    @objc func slideItemDidSelect(indexPath: Int)
 }
 
 class MediaSlideShow: UIView, NibOwnerLoadable {
