@@ -1,15 +1,14 @@
 //
-//  MediaCollectionCell.swift
+//  StackMediaCollectionCell.swift
 //  CustomSlideShow
 //
-//  Created by Mtaxi on 2022/3/16.
+//  Created by Mtaxi on 2022/3/22.
 //
 
 import UIKit
-import AVFoundation
-import SnapKit
+import SDWebImage
 
-protocol MediaCellDelegate: AnyObject {
+protocol StackMediaDelegate: AnyObject{
     
     func videoIsPlaying(isPlaying: Bool)
     
@@ -17,19 +16,25 @@ protocol MediaCellDelegate: AnyObject {
     
 }
 
-class MediaCollectionCell: UICollectionViewCell {
+class StackMediaCollectionCell: UICollectionViewCell {
     
     /// avplayer
     let playerView = PlayerView()
     
-    /// mute button
-    private let muteButton = UIButton()
+    /// image view
+    let imageView = SDAnimatedImageView()
     
     /// remain time label
     let remainTimeLabel = UILabel()
     
+    /// mute button
+    private let muteButton = UIButton()
+    
     /// Url
     var url: URL?
+    
+    /// image URL
+    var imageUrl: URL?
     
     /// Media cell delegate
     weak var delegate: MediaCellDelegate?
@@ -39,7 +44,8 @@ class MediaCollectionCell: UICollectionViewCell {
     
     /// default audio on button image
     var audioOnImage = UIImage(named: "audio")?.withRenderingMode(.alwaysTemplate)
-
+    
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         setupUI()
@@ -47,35 +53,50 @@ class MediaCollectionCell: UICollectionViewCell {
     
     private func setupUI(){
         self.backgroundColor = .clear
+        self.addSubview(muteButton)
         self.addSubview(playerView)
-        playerView.snp.makeConstraints { make in
+        self.addSubview(imageView)
+        self.addSubview(remainTimeLabel)
+        
+        muteButton.snp.makeConstraints { make in
             make.top.equalToSuperview()
-            make.leading.equalToSuperview()
-            make.trailing.equalToSuperview()
-            make.bottom.equalToSuperview()
+            make.leading.equalToSuperview().inset(16)
         }
         
         muteButton.setTitleColor(.white, for: .normal)
         muteButton.setImage(audioOffImage, for: .normal)
         muteButton.tintColor = .white
         
-        playerView.addSubview(muteButton)
-        muteButton.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.leading.equalTo(playerView.snp.leading).inset(16)
-        }
-        
-        playerView.addSubview(remainTimeLabel)
         remainTimeLabel.snp.makeConstraints { make in
             make.centerY.equalTo(muteButton.snp.centerY)
             make.leading.equalTo(muteButton.snp.trailing).offset(16)
         }
+        
         remainTimeLabel.textColor = .white
         remainTimeLabel.font = .boldSystemFont(ofSize: 14)
         
+        playerView.snp.makeConstraints { make in
+            make.top.equalTo(muteButton.snp.bottom).inset(4)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.height.equalToSuperview().dividedBy(2.5)
+        }
+        
+        imageView.snp.makeConstraints { make in
+            make.top.equalTo(playerView.snp.bottom)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+        imageView.contentMode = .scaleAspectFit
+        
+        
+        
+        
         playerView.delegate = self
+        
         muteButton.addTarget(self, action: #selector(muteToggle), for: .touchUpInside)
-
+        
     }
     
     /// Play
@@ -108,23 +129,31 @@ class MediaCollectionCell: UICollectionViewCell {
     }
     
     /// configure
-    func configure(_ videoUrl: String){
+    func configure(_ videoUrl: String, imageUrl: String){
         guard let url = URL(string: videoUrl) else { return }
+        guard let image = URL(string: imageUrl) else { return }
         self.url = url
+        self.imageUrl = image
+        imageView.sd_setImage(with: image, completed: nil)
         playerView.prepareToPlay(with: url, shouldPlayImmediately: true)
     }
     
     /// configure filepath
-    func file(_ filePath: String?){
-        guard let path = filePath else { return }
+    func file(_ videoFilePath: String?, imageFilePath: String?){
+        guard let path = videoFilePath else { return }
+        guard let image = imageFilePath else { return }
         let finalPath = URL(fileURLWithPath: path)
+        let finalImagePath = URL(fileURLWithPath: image)
         self.url = finalPath
+        self.imageUrl = finalImagePath
+        imageView.sd_setImage(with: finalImagePath, completed: nil)
         playerView.prepareToPlay(filePath: finalPath, shouldPlayImmediately: true)
     }
     
 }
 
-extension MediaCollectionCell: PlayerDelegate {
+
+extension StackMediaCollectionCell: PlayerDelegate {
     
     func videoIsPlaying(isPlaying: Bool) {
         delegate?.videoIsPlaying(isPlaying: isPlaying)
@@ -140,5 +169,4 @@ extension MediaCollectionCell: PlayerDelegate {
     
     
 }
-
 

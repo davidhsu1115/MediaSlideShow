@@ -28,6 +28,8 @@
 		652CF11727E810450088C09F /* Schedule in Frameworks */ = {isa = PBXBuildFile; productRef = 652CF11627E810450088C09F /* Schedule */; };
 		652CF11927E8450D0088C09F /* FileDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652CF11827E8450D0088C09F /* FileDownloader.swift */; };
 		652CF11C27E85BC40088C09F /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 652CF11B27E85BC40088C09F /* SDWebImage */; };
+		652CF11E27E967760088C09F /* StackMediaCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652CF11D27E967760088C09F /* StackMediaCollectionCell.swift */; };
+		652CF12427E9717B0088C09F /* StackMediaCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 652CF12227E9717B0088C09F /* StackMediaCollectionCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +72,8 @@
 		652CF10F27E3290F0088C09F /* NibOwnerLoadable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NibOwnerLoadable.swift; sourceTree = "<group>"; };
 		652CF11327E32BA40088C09F /* DemoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoVC.swift; sourceTree = "<group>"; };
 		652CF11827E8450D0088C09F /* FileDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDownloader.swift; sourceTree = "<group>"; };
+		652CF11D27E967760088C09F /* StackMediaCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackMediaCollectionCell.swift; sourceTree = "<group>"; };
+		652CF12227E9717B0088C09F /* StackMediaCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StackMediaCollectionCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,9 +135,11 @@
 				652CF0D427E1AC100088C09F /* Main.storyboard */,
 				652CF0FE27E1ACD10088C09F /* ImageCollectionCell.swift */,
 				652CF10227E1D9820088C09F /* MediaCollectionCell.swift */,
+				652CF11D27E967760088C09F /* StackMediaCollectionCell.swift */,
 				652CF10F27E3290F0088C09F /* NibOwnerLoadable.swift */,
 				652CF10B27E2D3A10088C09F /* PlayerView.swift */,
 				652CF10327E1D9820088C09F /* MediaCollectionCell.xib */,
+				652CF12227E9717B0088C09F /* StackMediaCollectionCell.xib */,
 				652CF0FF27E1ACD10088C09F /* ImageCollectionCell.xib */,
 				652CF0D727E1AC100088C09F /* Assets.xcassets */,
 				652CF0D927E1AC100088C09F /* LaunchScreen.storyboard */,
@@ -276,6 +282,7 @@
 			files = (
 				652CF0DB27E1AC100088C09F /* LaunchScreen.storyboard in Resources */,
 				652CF0D827E1AC100088C09F /* Assets.xcassets in Resources */,
+				652CF12427E9717B0088C09F /* StackMediaCollectionCell.xib in Resources */,
 				652CF0D627E1AC100088C09F /* Main.storyboard in Resources */,
 				652CF10527E1D9820088C09F /* MediaCollectionCell.xib in Resources */,
 				652CF10127E1ACD20088C09F /* ImageCollectionCell.xib in Resources */,
@@ -307,6 +314,7 @@
 				652CF11027E3290F0088C09F /* NibOwnerLoadable.swift in Sources */,
 				652CF10427E1D9820088C09F /* MediaCollectionCell.swift in Sources */,
 				652CF10E27E328870088C09F /* MediaSlideShow.swift in Sources */,
+				652CF11E27E967760088C09F /* StackMediaCollectionCell.swift in Sources */,
 				652CF11927E8450D0088C09F /* FileDownloader.swift in Sources */,
 				652CF0CF27E1AC100088C09F /* AppDelegate.swift in Sources */,
 				652CF11427E32BA40088C09F /* DemoVC.swift in Sources */,

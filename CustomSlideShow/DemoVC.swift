@@ -17,14 +17,16 @@ class DemoVC: UIViewController {
         super.viewDidLoad()
         FileDownloader.loadFileAsync(url: URL(string: "https://www.mtaxi.com.tw/wp-content/uploads/2022/03/寵物專車15秒2-1.mp4".urlEncoded())!) { path, error in
             print("\(path)")
-            
+            UserDefaults.standard.set(path, forKey: "AAA")
+            UserDefaults.standard.synchronize()
             self.testFilePath = path!
             let a = AVAsset(url: URL(fileURLWithPath: path!))
             print(a.duration)
         }
         
-        let source: Array<MediaSlideShow.SourceType> = [.imageLink(url: "https://oneapi.hostar.com.tw/oneLoginAdAndHelp/pic/jer.gif"),
-                                                        .mediaFile(path: testFilePath),
+        let source: Array<MediaSlideShow.SourceType> = [.stackMediaUrls(mediaUrl: "https://www.mtaxi.com.tw/wp-content/uploads/2022/03/寵物專車15秒2-1.mp4", imageUrl: "https://oneapi.hostar.com.tw/oneLoginAdAndHelp/pic/jer.gif"),
+                                                        .imageLink(url: "https://oneapi.hostar.com.tw/oneLoginAdAndHelp/pic/jer.gif"),
+                                                        .mediaFile(path: UserDefaults.standard.string(forKey: "AAA")!),
                                                         .image(image: UIImage(named: "bbb")!),
                                                         .media(url: "https://www.mtaxi.com.tw/wp-content/uploads/2022/03/寵物專車15秒2-1.mp4")
         ]

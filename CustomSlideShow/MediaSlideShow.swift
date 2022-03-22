@@ -22,6 +22,8 @@ class MediaSlideShow: UIView, NibOwnerLoadable {
         case mediaFile(path: String)
         case imageLink(url: String)
         case image(image: UIImage)
+        case stackMediaUrls(mediaUrl: String, imageUrl: String)
+        case stackMediaFile(mediaPath: String, imagePath: String)
     }
     
     /// slideshow data source
@@ -45,6 +47,7 @@ class MediaSlideShow: UIView, NibOwnerLoadable {
         cv.dataSource = self
         cv.register(UINib(nibName: "ImageCollectionCell", bundle: nil), forCellWithReuseIdentifier: "ImageCollectionCell")
         cv.register(UINib(nibName: "MediaCollectionCell", bundle: nil), forCellWithReuseIdentifier: "MediaCollectionCell")
+        cv.register(UINib(nibName: "StackMediaCollectionCell", bundle: nil), forCellWithReuseIdentifier: "StackMediaCollectionCell")
         cv.alwaysBounceVertical = false
         cv.backgroundColor = .clear
         return cv
@@ -128,10 +131,6 @@ extension MediaSlideShow {
         section.orthogonalScrollingBehavior = .paging
         section.visibleItemsInvalidationHandler = { [weak self] visibleItems, point, environment in
             
-            if (point.x / (self?.collectionView.bounds.width ?? 0)) == round((point.x / (self?.collectionView.bounds.width ?? 0))){
-                
-            }
-            
             self?.playFirstVisibleVideo()
             if let page = Int(exactly: CGFloat(point.x / (self?.collectionView.bounds.width ?? 0))){
                 self?.pageControl.currentPage = page
@@ -166,11 +165,34 @@ extension MediaSlideShow {
             }
         }
         
+        let stackMediaCells = cells.compactMap({ $0 as? StackMediaCollectionCell })
+        if stackMediaCells.count > 0 {
+            // 3. check if cell is fully visible
+            let firstVisibleCell = stackMediaCells.first(where: { checkVideoFrameVisibility(of: $0) })
+            
+            // 4. Loop cell for variable shouldPlay and pause rest of videos
+            for mediaCell in stackMediaCells {
+                if shouldPlay && firstVisibleCell == mediaCell {
+                    mediaCell.play()
+                }else{
+                    mediaCell.pause()
+                    mediaCell.mute()
+                }
+            }
+        }
+        
     }
     
     
     /// Check video frame visiblility
     func checkVideoFrameVisibility(of cell: MediaCollectionCell) -> Bool {
+        var cellRect = cell.playerView.bounds
+        cellRect = cell.playerView.convert(cell.playerView.bounds, to: collectionView.superview)
+        return collectionView.frame.contains(cellRect)
+    }
+    
+    /// Check video frame visiblility
+    func checkVideoFrameVisibility(of cell: StackMediaCollectionCell) -> Bool {
         var cellRect = cell.playerView.bounds
         cellRect = cell.playerView.convert(cell.playerView.bounds, to: collectionView.superview)
         return collectionView.frame.contains(cellRect)
@@ -188,7 +210,7 @@ extension MediaSlideShow {
     
 }
 
-extension MediaSlideShow: UICollectionViewDelegate, UICollectionViewDataSource, MediaCellDelegate {
+extension MediaSlideShow: UICollectionViewDelegate, UICollectionViewDataSource, MediaCellDelegate, StackMediaDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         delegate?.slideItemDidSelect(indexPath: indexPath.item)
@@ -211,6 +233,10 @@ extension MediaSlideShow: UICollectionViewDelegate, UICollectionViewDataSource, 
             return photoCellGenerator(indexPath: indexPath, image: image, imageUrl: "")
         case .mediaFile(let path):
             return mediaCellGenerator(indexPath: indexPath, filePath: path)
+        case .stackMediaUrls(let mediaUrl, let imageUrl):
+            return stackMediaCellGenerator(indexPath: indexPath, mediaUrl: mediaUrl, imageUrl: imageUrl)
+        case .stackMediaFile(let mediaPath, let imagePath):
+            return stackMediaCellGenerator(indexPath: indexPath, mediaPath: mediaPath, imagePath: imagePath)
         }
         
     }
@@ -218,7 +244,6 @@ extension MediaSlideShow: UICollectionViewDelegate, UICollectionViewDataSource, 
     
     private func photoCellGenerator(indexPath: IndexPath, image: UIImage? = nil, imageUrl: String) -> UICollectionViewCell{
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCollectionCell", for: indexPath) as! ImageCollectionCell
-        cell.imageView.image = UIImage(named: "bbb")
         
         if image != nil {
             cell.imageView.image = image
@@ -239,6 +264,20 @@ extension MediaSlideShow: UICollectionViewDelegate, UICollectionViewDataSource, 
     private func mediaCellGenerator(indexPath: IndexPath, filePath: String) -> UICollectionViewCell{
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MediaCollectionCell", for: indexPath) as! MediaCollectionCell
         cell.file(filePath)
+        cell.delegate = self
+        return cell
+    }
+    
+    private func stackMediaCellGenerator(indexPath: IndexPath, mediaUrl: String, imageUrl: String) -> UICollectionViewCell{
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "StackMediaCollectionCell", for: indexPath) as! StackMediaCollectionCell
+        cell.configure(mediaUrl.urlEncoded(), imageUrl: imageUrl.urlEncoded())
+        cell.delegate = self
+        return cell
+    }
+    
+    private func stackMediaCellGenerator(indexPath: IndexPath, mediaPath: String, imagePath: String) -> UICollectionViewCell{
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "StackMediaCollectionCell", for: indexPath) as! StackMediaCollectionCell
+        cell.file(mediaPath, imageFilePath: imagePath)
         cell.delegate = self
         return cell
     }

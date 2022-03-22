@@ -14,6 +14,9 @@ protocol PlayerDelegate: AnyObject {
     /// video is playing
     func videoIsPlaying(isPlaying: Bool)
     
+    /// video remaining time
+    func videoRemainingTimedidUpdate(second: Int)
+    
     /// video did end
     func videoDidEnd()
     
@@ -42,8 +45,11 @@ class PlayerView: UIView {
     /// player item
     private var playerItem: AVPlayerItem?
     
+    /// timeObsToken
+    private var timeObserverToken: Any?
+    
     /// asset player
-    private var assetPlayer: AVPlayer? {
+    private(set) var assetPlayer: AVPlayer? {
         didSet {
             DispatchQueue.main.async {
                 if let layer = self.layer as? AVPlayerLayer {
@@ -165,6 +171,10 @@ class PlayerView: UIView {
         urlAsset = nil
         assetPlayer = nil
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
+        if let timeObserverToken = timeObserverToken {
+            assetPlayer?.removeTimeObserver(timeObserverToken)
+            self.timeObserverToken = nil
+        }
     }
     
     
@@ -213,6 +223,7 @@ extension PlayerView {
             self.assetPlayer = player
             
             if shouldPlayImmdiately {
+                self.addPeriodicTimeObs()
                 DispatchQueue.main.async {
                     player.play()
                     player.isMuted = true
@@ -267,6 +278,17 @@ extension PlayerView {
         }
         
     }
+    
+    private func addPeriodicTimeObs(){
+        let timeScale = CMTimeScale(NSEC_PER_SEC)
+        let time = CMTime(seconds: 0.5, preferredTimescale: timeScale)
+        timeObserverToken = assetPlayer?.addPeriodicTimeObserver(forInterval: time, queue: .main, using: { [weak self] time in
+            let interval = Int((self?.assetPlayer?.currentItem?.asset.duration.seconds ?? 0) - time.seconds)
+            self?.delegate?.videoRemainingTimedidUpdate(second: interval)
+        })
+        
+    }
+    
     
 }
 
