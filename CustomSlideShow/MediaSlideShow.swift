@@ -63,8 +63,8 @@ class MediaSlideShow: UIView, NibOwnerLoadable {
         return cv
     }()
 
-    
-    private let pageControl = UIPageControl()
+    /// Default UIPageControl
+    let pageControl = UIPageControl()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
