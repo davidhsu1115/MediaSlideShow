@@ -16,7 +16,7 @@ class DemoVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         FileDownloader.loadFileAsync(url: URL(string: "https://www.mtaxi.com.tw/wp-content/uploads/2022/03/寵物專車15秒2-1.mp4".urlEncoded())!) { path, error in
-            print("\(path)")
+            
             UserDefaults.standard.set(path, forKey: "AAA")
             UserDefaults.standard.synchronize()
             self.testFilePath = path!
