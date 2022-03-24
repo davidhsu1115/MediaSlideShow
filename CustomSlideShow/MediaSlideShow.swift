@@ -184,6 +184,18 @@ extension MediaSlideShow {
             collectionView.indexPath(for: $0)?.item ?? 0 < collectionView.indexPath(for: $1)?.item ?? 0
         }
         
+        let imageCells = cells.compactMap({ $0 as? ImageCollectionCell })
+        if imageCells.count > 0 {
+            let firstVisibleCell = imageCells.first(where: { checkImageFrameVisible(of: $0) })
+            
+            for imageCell in imageCells {
+                if firstVisibleCell == imageCell {
+                    imageCell.playGif()
+                }
+            }
+            
+        }
+        
         // 2. map cell as media collection cell
         let mediaCells = cells.compactMap({ $0 as? MediaCollectionCell })
         
@@ -218,6 +230,13 @@ extension MediaSlideShow {
             }
         }
         
+    }
+    
+    /// Check image frame visiblity
+    func checkImageFrameVisible(of cell: ImageCollectionCell) -> Bool {
+        var cellRect = cell.imageView.bounds
+        cellRect = cell.imageView.convert(cell.imageView.bounds, to: collectionView.superview)
+        return collectionView.frame.contains(cellRect)
     }
     
     
@@ -320,8 +339,8 @@ extension MediaSlideShow: UICollectionViewDelegate, UICollectionViewDataSource, 
     }
     
     func videoDidEnd() {
-        guard slideShowMultipleInterval.count == 0 else { return }
         pageScroll()
+        guard slideShowMultipleInterval.count == 0 else { return }
         restartTimer()
     }
     

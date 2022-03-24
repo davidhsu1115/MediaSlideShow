@@ -24,7 +24,13 @@ class ImageCollectionCell: UICollectionViewCell {
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.alwaysBounceVertical = false
         scrollView.alwaysBounceHorizontal = false
-        
+        imageView.autoPlayAnimatedImage = true
+        imageView.player?.startPlaying()
+    }
+    
+    // play gif
+    func playGif(){
+        imageView.player?.startPlaying()
     }
     
 }
