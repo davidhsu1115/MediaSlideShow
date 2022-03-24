@@ -46,6 +46,15 @@ class MediaSlideShow: UIView, NibOwnerLoadable {
         }
     }
     
+    /// Multiple timer interval
+    var slideShowMultipleInterval: [Double] = []{
+        didSet {
+            slideshowTimer?.invalidate()
+            slideshowTimer = nil
+            setTimerIfNeeded()
+        }
+    }
+    
     /// Slide timer
     private var slideshowTimer: Timer?
 
@@ -116,6 +125,7 @@ class MediaSlideShow: UIView, NibOwnerLoadable {
     
     @objc private func changePage(_ sender: UIPageControl) {
         collectionView.scrollToItem(at: IndexPath(item: sender.currentPage, section: 0), at: .left, animated: true)
+        restartMultupleTimer(index: sender.currentPage)
     }
     
     private func pageScroll(){
@@ -125,6 +135,7 @@ class MediaSlideShow: UIView, NibOwnerLoadable {
             self.pageControl.currentPage += 1
         }
         self.collectionView.scrollToItem(at: IndexPath(item: self.pageControl.currentPage, section: 0), at: .left, animated: true)
+        restartMultupleTimer(index: pageControl.currentPage)
     }
     
     override func willMove(toSuperview newSuperview: UIView?) {
@@ -159,6 +170,7 @@ extension MediaSlideShow {
             self?.playFirstVisibleVideo()
             if let page = Int(exactly: CGFloat(point.x / (self?.collectionView.bounds.width ?? 0))){
                 self?.pageControl.currentPage = page
+                self?.restartMultupleTimer(index: page)
             }
         }
         return UICollectionViewCompositionalLayout(section: section)
@@ -299,6 +311,7 @@ extension MediaSlideShow: UICollectionViewDelegate, UICollectionViewDataSource, 
     }
     
     func videoIsPlaying(isPlaying: Bool) {
+        guard slideShowMultipleInterval.count == 0 else { return }
         if isPlaying {
             terminateTimer()
         }else{
@@ -307,6 +320,7 @@ extension MediaSlideShow: UICollectionViewDelegate, UICollectionViewDataSource, 
     }
     
     func videoDidEnd() {
+        guard slideShowMultipleInterval.count == 0 else { return }
         pageScroll()
         restartTimer()
     }
@@ -332,6 +346,16 @@ extension MediaSlideShow {
         }
         
         setTimerIfNeeded()
+    }
+    
+    private func restartMultupleTimer(index: Int){
+        guard slideShowMultipleInterval.count != 0 else { return }
+        if slideshowTimer?.isValid != nil {
+            slideshowTimer?.invalidate()
+            slideshowTimer = nil
+        }
+        slideshowTimer = Timer.scheduledTimer(timeInterval: slideShowMultipleInterval[index], target: self, selector: #selector(MediaSlideShow.slideTick(_:)), userInfo: nil, repeats: true)
+        
     }
     
     private func terminateTimer(){
