@@ -127,6 +127,17 @@ class MediaSlideShow: UIView, NibOwnerLoadable {
         self.collectionView.scrollToItem(at: IndexPath(item: self.pageControl.currentPage, section: 0), at: .left, animated: true)
     }
     
+    override func willMove(toSuperview newSuperview: UIView?) {
+        if newSuperview == nil {
+            terminateTimer()
+        }
+    }
+    
+    override func removeFromSuperview() {
+        super.removeFromSuperview()
+        terminateTimer()
+    }
+    
     
 }
 

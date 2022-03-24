@@ -49,15 +49,7 @@ class PlayerView: UIView {
     private var timeObserverToken: Any?
     
     /// asset player
-    private(set) var assetPlayer: AVPlayer? {
-        didSet {
-            DispatchQueue.main.async {
-                if let layer = self.layer as? AVPlayerLayer {
-                    layer.player = self.assetPlayer
-                }
-            }
-        }
-    }
+    private(set) var assetPlayer: AVPlayer?
     
     override class var layerClass: AnyClass{
         return AVPlayerLayer.self
@@ -221,6 +213,12 @@ extension PlayerView {
             
             let player = AVPlayer(playerItem: item)
             self.assetPlayer = player
+            
+            DispatchQueue.main.async {
+                if let layer = self.layer as? AVPlayerLayer {
+                    layer.player = self.assetPlayer
+                }
+            }
             
             if shouldPlayImmdiately {
                 self.addPeriodicTimeObs()
