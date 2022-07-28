@@ -125,23 +125,15 @@
 		652CF0CD27E1AC100088C09F /* CustomSlideShow */ = {
 			isa = PBXGroup;
 			children = (
-				652CF0CE27E1AC100088C09F /* AppDelegate.swift */,
-				652CF0D027E1AC100088C09F /* SceneDelegate.swift */,
+				657AF6B6289223490022BF4B /* Utlities */,
 				652CF10D27E328870088C09F /* MediaSlideShow.swift */,
 				652CF11327E32BA40088C09F /* DemoVC.swift */,
 				652CF0D427E1AC100088C09F /* Main.storyboard */,
-				652CF0FE27E1ACD10088C09F /* ImageCollectionCell.swift */,
-				652CF10227E1D9820088C09F /* MediaCollectionCell.swift */,
-				652CF11D27E967760088C09F /* StackMediaCollectionCell.swift */,
-				652CF10F27E3290F0088C09F /* NibOwnerLoadable.swift */,
 				652CF10B27E2D3A10088C09F /* PlayerView.swift */,
-				652CF10327E1D9820088C09F /* MediaCollectionCell.xib */,
-				652CF12227E9717B0088C09F /* StackMediaCollectionCell.xib */,
-				652CF0FF27E1ACD10088C09F /* ImageCollectionCell.xib */,
+				657AF6B5289223290022BF4B /* Cell */,
 				652CF0D727E1AC100088C09F /* Assets.xcassets */,
 				652CF0D927E1AC100088C09F /* LaunchScreen.storyboard */,
 				652CF0DC27E1AC100088C09F /* Info.plist */,
-				652CF11827E8450D0088C09F /* FileDownloader.swift */,
 			);
 			path = CustomSlideShow;
 			sourceTree = "<group>";
@@ -161,6 +153,30 @@
 				652CF0F127E1AC110088C09F /* CustomSlideShowUITestsLaunchTests.swift */,
 			);
 			path = CustomSlideShowUITests;
+			sourceTree = "<group>";
+		};
+		657AF6B5289223290022BF4B /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				652CF0FE27E1ACD10088C09F /* ImageCollectionCell.swift */,
+				652CF10227E1D9820088C09F /* MediaCollectionCell.swift */,
+				652CF11D27E967760088C09F /* StackMediaCollectionCell.swift */,
+				652CF10327E1D9820088C09F /* MediaCollectionCell.xib */,
+				652CF12227E9717B0088C09F /* StackMediaCollectionCell.xib */,
+				652CF0FF27E1ACD10088C09F /* ImageCollectionCell.xib */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		657AF6B6289223490022BF4B /* Utlities */ = {
+			isa = PBXGroup;
+			children = (
+				652CF11827E8450D0088C09F /* FileDownloader.swift */,
+				652CF0CE27E1AC100088C09F /* AppDelegate.swift */,
+				652CF0D027E1AC100088C09F /* SceneDelegate.swift */,
+				652CF10F27E3290F0088C09F /* NibOwnerLoadable.swift */,
+			);
+			path = Utlities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
